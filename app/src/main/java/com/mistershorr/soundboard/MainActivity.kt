@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.mistershorr.soundboard.databinding.ActivityMainBinding
+import kotlinx.coroutines.delay
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,19 +16,35 @@ class MainActivity : AppCompatActivity() {
 //    lateinit var buttonBb : Button
 //    lateinit var buttonB : Button
 //    lateinit var buttonC : Button
-    lateinit var soundPool : SoundPool
-    var aNote = 0
-    var bbNote = 0
-    var bNote = 0
-    var cNote = 0
-    var csNote = 0
-    var dNote = 0
-    var dsNote = 0
-    var eNote = 0
-    var fNote = 0
-    var fsNote = 0
-    var gNote = 0
-    var gsNote = 0
+    private lateinit var soundPool : SoundPool
+    private var aNote = 0
+    private var bbNote = 0
+    private var bNote = 0
+    private var cNote = 0
+    private var csNote = 0
+    private var dNote = 0
+    private var dsNote = 0
+    private var eNote = 0
+    private var fNote = 0
+    private var fsNote = 0
+    private var gNote = 0
+    private var gsNote = 0
+
+    private var noteMap = mapOf(
+        "A" to aNote,
+        "Bb" to bbNote,
+        "B" to bNote,
+        "C" to cNote,
+        "Cs" to csNote,
+        "D" to dNote,
+        "Ds" to dsNote,
+        "E" to eNote,
+        "F" to fNote,
+        "Fs" to fsNote,
+        "G" to gNote,
+        "Gs" to gsNote
+    )
+
 
     // instance variable for the view binging
     private lateinit var binding: ActivityMainBinding
@@ -66,10 +83,18 @@ class MainActivity : AppCompatActivity() {
 //        soundPool.setOnLoadCompleteListener(SoundPool.OnLoadCompleteListener { soundPool, sampleId, status ->
 //           // isSoundPoolLoaded = true
 //        })
-        aNote = soundPool.load(this, R.raw.scalea, 1)
+        aNote  = soundPool.load(this, R.raw.scalea,  1)
         bbNote = soundPool.load(this, R.raw.scalebb, 1)
-        bNote = soundPool.load(this, R.raw.scaleb, 1)
-        cNote =  soundPool.load(this, R.raw.scalec, 1)
+        bNote  = soundPool.load(this, R.raw.scaleb,  1)
+        cNote  = soundPool.load(this, R.raw.scalec,  1)
+        csNote = soundPool.load(this, R.raw.scalecs, 1)
+        dNote  = soundPool.load(this, R.raw.scaled,  1)
+        dsNote = soundPool.load(this, R.raw.scaleds, 1)
+        eNote  = soundPool.load(this, R.raw.scalee,  1)
+        fNote  = soundPool.load(this, R.raw.scalef,  1)
+        fsNote = soundPool.load(this, R.raw.scalefs, 1)
+        gNote  = soundPool.load(this, R.raw.scaleg,  1)
+        gsNote = soundPool.load(this, R.raw.scalegs, 1)
     }
 
     private fun playNote(noteId : Int) {
@@ -87,24 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun playSong(song: List<Note>) {
         for (note in song) {
-            playNote(
-                when (note.frequency) {
-                    "a"  -> aNote
-                    "bb" -> bbNote
-                    "b"  -> bNote
-                    "c"  -> cNote
-                    "cs" -> csNote
-                    "d"  -> dNote
-                    "ds" -> dsNote
-                    "e"  -> eNote
-                    "f"  -> fNote
-                    "fs" -> fsNote
-                    "g"  -> gNote
-                    "gs" -> gsNote
-                    // play random note :)
-                    else -> aNote
-                }
-            )
+            playNote(noteMap[note.frequency] ?: 0)
             delay(note.duration)
         }
     }

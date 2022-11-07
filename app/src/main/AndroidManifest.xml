@@ -12,9 +12,8 @@
         android:theme="@style/Theme.Soundboard">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true"
-            tools:ignore="LockedOrientationActivity">
+            android:screenOrientation="landscape"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
