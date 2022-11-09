@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.mistershorr.soundboard.databinding.ActivityMainBinding
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,17 +49,17 @@ class MainActivity : AppCompatActivity() {
         "Gs" to gsNote
     )
 
-
     // instance variable for the view binging
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var song: List<Note>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        wireWidgets()
+        song = loadSong()
         initializeSoundPool()
         setListeners()
     }
@@ -66,14 +70,33 @@ class MainActivity : AppCompatActivity() {
         binding.buttonMainBb.setOnClickListener(soundBoardListener)
         binding.buttonMainB.setOnClickListener(soundBoardListener)
         binding.buttonMainC.setOnClickListener(soundBoardListener)
+        binding.buttonMainCs.setOnClickListener(soundBoardListener)
+        binding.buttonMainD.setOnClickListener(soundBoardListener)
+        binding.buttonMainDs.setOnClickListener(soundBoardListener)
+        binding.buttonMainE.setOnClickListener(soundBoardListener)
+        binding.buttonMainF.setOnClickListener(soundBoardListener)
+        binding.buttonMainFs.setOnClickListener(soundBoardListener)
+        binding.buttonMainG.setOnClickListener(soundBoardListener)
+        binding.buttonMainGs.setOnClickListener(soundBoardListener)
+        binding.buttonMainPlay.setOnClickListener {
+            // launch a coroutine
+            Log.d(TAG, "setListeners: *** Play Button Clicked ***")
+            GlobalScope.launch {
+                playSong(song)
+            }
+        }
     }
 
-
-    private fun wireWidgets() {
-//        buttonA = findViewById(R.id.button_main_a)
-//        buttonBb = findViewById(R.id.button_main_bb)
-//        buttonB = findViewById(R.id.button_main_b)
-//        buttonC = findViewById(R.id.button_main_c)
+    private fun loadSong(): List<Note> {
+        val inputStream = resources.openRawResource(R.raw.song)
+        val jsonString = inputStream.bufferedReader().use {
+            // the last line of the use function is returned
+            it.readText()
+        }
+        val gson = Gson()
+        val type = object : TypeToken<List<Note>>() { }.type
+        val questions = gson.fromJson<List<Note>>(jsonString, type)
+        return questions
     }
 
     private fun initializeSoundPool() {
@@ -101,16 +124,17 @@ class MainActivity : AppCompatActivity() {
         soundPool.play(noteId, 1f, 1f, 1, 0, 1f)
     }
 
-    private fun delay(time: Long) {
-        try {
-            Thread.sleep(time)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-            Log.e(TAG, "delay: delay interrupted", e)
-        }
-    }
+    // Locks main thread, not ideal.
+//    private fun delay(time: Long) {
+//        try {
+//            Thread.sleep(time)
+//        } catch (e: InterruptedException) {
+//            e.printStackTrace()
+//            Log.e(TAG, "delay: delay interrupted", e)
+//        }
+//    }
 
-    private fun playSong(song: List<Note>) {
+    private suspend fun playSong(song: List<Note>) {
         for (note in song) {
             playNote(noteMap[note.frequency] ?: 0)
             delay(note.duration)
@@ -121,13 +145,27 @@ class MainActivity : AppCompatActivity() {
         override fun onClick(v: View?) {
             when(v?.id) {
                 R.id.button_main_aLow -> playNote(aNote)
-                R.id.button_main_bb -> playNote(bbNote)
+                R.id.button_main_bbLow -> playNote(bbNote)
                 R.id.button_main_bLow -> playNote(bNote)
                 R.id.button_main_cLow -> playNote(cNote)
-                R.id.button_main_cs -> playNote(csNote)
+                R.id.button_main_csLow -> playNote(csNote)
                 R.id.button_main_dLow -> playNote(dNote)
-                R.id.button_main_ds -> playNote(dsNote)
+                R.id.button_main_dsLow -> playNote(dsNote)
                 R.id.button_main_fLow -> playNote(fNote)
+                R.id.button_main_fsLow -> playNote(fsNote)
+                R.id.button_main_gLow -> playNote(fsNote)
+                R.id.button_main_gsLow -> playNote(fsNote)
+                R.id.button_main_a -> playNote(aNote)
+                R.id.button_main_bb -> playNote(bbNote)
+                R.id.button_main_b -> playNote(bNote)
+                R.id.button_main_c -> playNote(cNote)
+                R.id.button_main_cs -> playNote(csNote)
+                R.id.button_main_d -> playNote(dNote)
+                R.id.button_main_ds -> playNote(dsNote)
+                R.id.button_main_f -> playNote(fNote)
+                R.id.button_main_fs -> playNote(fsNote)
+                R.id.button_main_g -> playNote(fsNote)
+                R.id.button_main_gs -> playNote(fsNote)
             }
         }
     }
